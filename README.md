@@ -13,3 +13,9 @@ Good placement in the leaderboard.
 # Day 2
 
 I could do it only in the evening... but has not taken much time.
+
+
+# Day 3
+
+Like day 1, I was awake.
+And broke a glass while getting my laptop in the dark...
