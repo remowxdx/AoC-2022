@@ -6,7 +6,7 @@ DAY = 3
 
 
 def get_input(filename):
-    with open(filename, "r") as input_file:
+    with open(filename, "r", encoding="ascii") as input_file:
         lines = input_file.read()
     return lines.splitlines()
 

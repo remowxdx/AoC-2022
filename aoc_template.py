@@ -6,7 +6,7 @@ DAY = %%day%%
 
 
 def get_input(filename):
-    with open(filename, 'r') as input_file:
+    with open(filename, "r", encoding="ascii") as input_file:
         lines = input_file.read()
     return lines.splitlines()
 
@@ -20,21 +20,21 @@ def part2(data):
 
 
 def run_tests():
-    test_input_1 = get_input(f'ex{DAY}')
-    print('Test Part 1:')
-    test_eq('Test 1.1', part1, 42, test_input_1)
+    test_input_1 = get_input(f"ex{DAY}")
+    print("Test Part 1:")
+    test_eq("Test 1.1", part1, 42, test_input_1)
     print()
 
-    print('Test Part 2:')
-    test_eq('Test 2.1', part2, 42, test_input_1)
+    print("Test Part 2:")
+    test_eq("Test 2.1", part2, 42, test_input_1)
     print()
 
 
 def run_part1(solved):
-    data = get_input(f'input{DAY}')
+    data = get_input(f"input{DAY}")
 
     result1 = part1(data)
-    print('Part 1:', result1)
+    print("Part 1:", result1)
     if solved:
         check_solution(DAY, 1, result1)
     else:
@@ -42,10 +42,10 @@ def run_part1(solved):
 
 
 def run_part2(solved):
-    data = get_input(f'input{DAY}')
+    data = get_input(f"input{DAY}")
 
     result2 = part2(data)
-    print('Part 2:', result2)
+    print("Part 2:", result2)
     if solved:
         check_solution(DAY, 2, result2)
     else:
@@ -58,5 +58,5 @@ def main():
     # run_part2(False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

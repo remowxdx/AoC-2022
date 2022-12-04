@@ -1,0 +1,11 @@
+[MASTER]
+disable=
+    C0114, # missing-module-docstring
+    C0116, # missing-function-docstring
+good-names=
+    a,
+    b,
+    i,
+    j,
+    x,
+    y,
