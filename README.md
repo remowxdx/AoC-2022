@@ -19,3 +19,7 @@ I could do it only in the evening... but has not taken much time.
 
 Like day 1, I was awake.
 And broke a glass while getting my laptop in the dark...
+
+# Day 4
+
+Easy problem. Few minutes to solve.
