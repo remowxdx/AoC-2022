@@ -23,3 +23,15 @@ And broke a glass while getting my laptop in the dark...
 # Day 4
 
 Easy problem. Few minutes to solve.
+
+# Day 5
+
+Couldn't solve it the 5th, done the 6th.
+
+Took too much time to parse the input, but I'm happy of the result!
+
+# Day 6
+
+Interesting problem, part 1 and part 2 are almost the same, and I solved
+part 1 enough generally to also solve part 2.
+
