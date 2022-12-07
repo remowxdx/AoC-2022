@@ -35,3 +35,11 @@ Took too much time to parse the input, but I'm happy of the result!
 Interesting problem, part 1 and part 2 are almost the same, and I solved
 part 1 enough generally to also solve part 2.
 
+# Day 7
+
+I felt at home!!
+
+Shell commands, not enough file space... can't want more!
+
+But it took way too much time, about one hour to find the solutions and
+another 20 minutes to refine the script.
