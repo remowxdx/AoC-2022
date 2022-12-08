@@ -43,3 +43,12 @@ Shell commands, not enough file space... can't want more!
 
 But it took way too much time, about one hour to find the solutions and
 another 20 minutes to refine the script.
+
+# Day 8
+
+Ahhh, messy!
+
+Set the alarm at 6, but wasn't awake enough... lost too much time
+to discover that I didn't reset ```visible_from_*``` for every tree and
+that I returned ```top * right * left * right``` as scenic score
+instead of ```top * bottom * left * right```.
