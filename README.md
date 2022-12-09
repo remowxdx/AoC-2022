@@ -52,3 +52,9 @@ Set the alarm at 6, but wasn't awake enough... lost too much time
 to discover that I didn't reset ```visible_from_*``` for every tree and
 that I returned ```top * right * left * right``` as scenic score
 instead of ```top * bottom * left * right```.
+
+
+# Day 9
+
+Interesting problem. Didn't understand how to move the tail...
+I should read with more attention.
