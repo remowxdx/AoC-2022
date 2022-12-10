@@ -40,6 +40,27 @@ class CPU:
         return (self.cycle + 1) * self.X
 
 
+class Display:
+    """The disaplay"""
+
+    def __init__(self):
+        self.display = [["." for _ in range(40)] for _ in range(6)]
+
+    def set_pixel(self, x, y, val):
+        self.display[y][x] = val
+
+    def scan(self, cpu):
+        x = cpu.cycle % 40
+        y = (cpu.cycle // 40) % 6
+        if abs(x - cpu.X) <= 1:
+            self.set_pixel(x, y, "#")
+        else:
+            self.set_pixel(x, y, ".")
+
+    def __str__(self):
+        return "\n".join(["".join(row) for row in self.display])
+
+
 def example():
     cpu = CPU(
         [
@@ -66,20 +87,11 @@ def part1(data):
 
 def part2(data):
     cpu = CPU(data)
-    display = []
-    row = ""
+    display = Display()
     for _ in range(240):
-        pos = cpu.cycle % 40
-        if pos == 0 and row != "":
-            display.append(row)
-            row = ""
-        if abs(pos - cpu.X) <= 1:
-            row += "#"
-        else:
-            row += "."
+        display.scan(cpu)
         cpu.tick()
-    display.append(row)
-    return "\n".join(display)
+    return str(display)
 
 
 def run_tests():
