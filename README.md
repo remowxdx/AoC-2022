@@ -58,3 +58,8 @@ instead of ```top * bottom * left * right```.
 
 Interesting problem. Didn't understand how to move the tail...
 I should read with more attention.
+
+# Day 10
+
+Should remember to add the last line of the display...
+Otherwise very fun to implement!
