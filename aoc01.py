@@ -6,51 +6,33 @@ DAY = 1
 
 
 def get_input(filename):
-    with open(filename, "r") as input_file:
+    with open(filename, "r", encoding="ascii") as input_file:
         lines = input_file.read()
     return lines.splitlines()
 
 
-def part1(data):
-    max_calories = 0
-    current_elf = 0
+def elves(data):
+    elf = []
+    emitted = False
     for line in data:
         if line == "":
-            if current_elf > max_calories:
-                max_calories = current_elf
-                print(max_calories)
-            current_elf = 0
-            continue
-        current_food = int(line)
-        current_elf += current_food
+            yield elf
+            emitted = True
+            elf = []
+        else:
+            elf.append(int(line))
+            emitted = False
+    if not emitted:
+        yield elf
 
-    if current_elf > max_calories:
-        max_calories = current_elf
-        print(max_calories)
 
-    return max_calories
+def part1(data):
+    return max([sum(elf) for elf in elves(data)])
 
 
 def part2(data):
-    max_calories = [0, 0, 0]
-    current_elf = 0
 
-    for line in data:
-
-        if line == "":
-            if current_elf > min(max_calories):
-                max_calories[max_calories.index(min(max_calories))] = current_elf
-                print(max_calories)
-            current_elf = 0
-            continue
-        current_food = int(line)
-        current_elf += current_food
-
-    if current_elf > min(max_calories):
-        max_calories[max_calories.index(min(max_calories))] = current_elf
-        print(max_calories)
-
-    return sum(max_calories)
+    return sum(sorted([sum(elf) for elf in elves(data)])[-3:])
 
 
 def run_tests():

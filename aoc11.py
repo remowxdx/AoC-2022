@@ -172,7 +172,8 @@ def part2(data):
             throw_list = monkey.turn()
             throw(throw_list, monkeys)
 
-        if False:
+        debug = False
+        if debug:
             if (round_ + 1) % 1000 == 0:
                 print(f"Round: {round_}")
                 for monkey in monkeys:
