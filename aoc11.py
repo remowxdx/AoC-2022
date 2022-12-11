@@ -38,7 +38,7 @@ class Op:
             return lhs * rhs
         raise ValueError(f"Invalid operation {self.operation}")
 
-    def magic(self):
+    def get_magic(self):
         if self.operation != "*":
             return 0
         magic = 1
@@ -55,54 +55,48 @@ class Op:
 class Monkey:
     """Monkey class"""
 
-    def __init__(self, panic=False):
+    def __init__(self, game):
         self.name = None
         self.items = []
         self.operation = None
         self.test = None
         self.test_target = [None, None]
         self.business = 0
-        self.magic = [panic, None]
+        self.game = game
 
     def parse(self, line):
-        magic = 0
         if line.startswith("Monkey"):
             self.name = int(line.split()[1].rstrip(":"))
         elif line.startswith("  Starting items: "):
             self.items = [int(item) for item in line.split(": ")[1].split(", ")]
         elif line.startswith("  Operation: "):
             self.operation = Op(line.split(": ")[1])
-            magic = self.operation.magic()
+            self.game.magic.add(self.operation.get_magic())
         elif line.startswith("  Test: divisible by "):
             self.test = int(line.split()[-1])
-            magic = self.test
+            self.game.magic.add(self.test)
         elif line.startswith("    If true: throw to monkey "):
             self.test_target[0] = int(line.split()[-1])
         elif line.startswith("    If false: throw to monkey "):
             self.test_target[1] = int(line.split()[-1])
         else:
             raise ValueError(f"Unknow monkey description: {line}")
-        return magic
-
-    def set_magic(self, magic):
-        self.magic[1] = magic
 
     def receive(self, item):
         self.items.append(item)
 
-    def turn(self):
-        throw_list = []
+    def play_turn(self):
         for item in self.items:
-            throw_list.append(self.inspect(item))
+            new_item, to_monkey = self.inspect(item)
+            self.game.throw_item(new_item, to_monkey)
         self.items = []
-        return throw_list
 
     def inspect(self, item):
         self.business += 1
         worry_level = self.operation.eval(item)
-        if self.magic[1] is not None:
-            worry_level %= self.magic[1]
-        if not self.magic[0]:
+        if self.game.panic:
+            worry_level = self.game.magic.manage_panic(worry_level)
+        else:
             worry_level //= 3
         if worry_level % self.test == 0:
             return worry_level, self.test_target[0]
@@ -111,74 +105,80 @@ class Monkey:
     def __str__(self):
         out = []
         out.append(f"Monkey {self.name}:")
-        out.append(f'  Starting items: {", ".join([str(item) for item in self.items])}')
+        out.append(f'  Items: {", ".join([str(item) for item in self.items])}')
         out.append(f"  Operation: {self.operation}")
         out.append(f"  Test: divisible by {self.test}")
         out.append(f"    If true: throw to monkey {self.test_target[0]}")
         out.append(f"    If false: throw to monkey {self.test_target[1]}")
+        out.append(f"  Business level: {self.business}")
         return "\n".join(out)
 
 
-def throw(throw_list, monkey_list):
-    for item, monkey in throw_list:
-        monkey_list[monkey].receive(item)
+class Magic:
+    """Christmas Magic"""
+
+    def __init__(self):
+        self._numbers = set()
+        self._magic_number = 1
+
+    def manage_panic(self, item):
+        return item % self._magic_number
+
+    def add(self, number):
+        if number > 1 and number not in self._numbers:
+            self._numbers.add(number)
+            self._magic_number *= number
 
 
-def monkey_business(monkeys):
-    max_business = [0, 0]
-    for monkey in monkeys:
-        min_ = min(max_business)
-        if monkey.business > min_:
-            max_business[max_business.index(min_)] = monkey.business
-    return max_business[0] * max_business[1]
+class KeepAway:
+    """A monkey's game."""
+
+    def __init__(self, notes, panic):
+        self.magic = Magic()
+        self.panic = panic
+        self.monkeys = self.observe_monkeys(notes)
+
+    def observe_monkeys(self, notes):
+        monkeys = [Monkey(self)]
+        for line in notes:
+            if line == "":
+                monkeys.append(Monkey(self))
+            else:
+                monkeys[-1].parse(line)
+        return monkeys
+
+    def play_round(self):
+        for monkey in self.monkeys:
+            monkey.play_turn()
+
+    def throw_item(self, item, to_monkey):
+        self.monkeys[to_monkey].receive(item)
+
+    def monkey_business(self):
+        max_business = [0, 0]
+        for monkey in self.monkeys:
+            min_ = min(max_business)
+            if monkey.business > min_:
+                max_business[max_business.index(min_)] = monkey.business
+        return max_business[0] * max_business[1]
 
 
-def part1(data):
-    monkeys = [Monkey()]
-    for line in data:
-        if line == "":
-            monkeys.append(Monkey())
-            continue
-        monkeys[-1].parse(line)
+def part1(notes):
+    game = KeepAway(notes, panic=False)
 
     for _round in range(20):
-        for monkey in monkeys:
-            throw_list = monkey.turn()
-            throw(throw_list, monkeys)
+        game.play_round()
 
-    return monkey_business(monkeys)
+    return game.monkey_business()
 
 
-def part2(data):
-    magic = set()
-    monkeys = [Monkey(panic=True)]
-    for line in data:
-        if line == "":
-            monkeys.append(Monkey(panic=True))
-            continue
-        factor = monkeys[-1].parse(line)
-        if factor > 1:
-            magic.add(factor)
+def part2(notes):
+    game = KeepAway(notes, panic=True)
 
-    magic_number = 1
-    for factor in magic:
-        magic_number *= factor
+    for _round in range(10000):
+        game.play_round()
 
-    for monkey in monkeys:
-        monkey.set_magic(magic_number)
-
-    for round_ in range(10000):
-        for monkey in monkeys:
-            throw_list = monkey.turn()
-            throw(throw_list, monkeys)
-
-        debug = False
-        if debug:
-            if (round_ + 1) % 1000 == 0:
-                print(f"Round: {round_}")
-                for monkey in monkeys:
-                    print(f"Monkey {monkey.name} {monkey.business}.")
-    return monkey_business(monkeys)
+    return game.monkey_business()
 
 
 def run_tests():
