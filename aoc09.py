@@ -25,6 +25,10 @@ def move(dir_, pos_h):
 
 def spring(pos_h, pos_t):
     diff = (pos_t[0] - pos_h[0], pos_t[1] - pos_h[1])
+
+    if abs(diff[0]) < 2 and abs(diff[1]) < 2:
+        return pos_t
+
     if diff[0] == 0:
         step_x = 0
     else:
@@ -35,12 +39,6 @@ def spring(pos_h, pos_t):
     else:
         step_y = diff[1] // abs(diff[1])
 
-    if abs(diff[0]) < 2 and abs(diff[1]) < 2:
-        return pos_t
-    if diff[0] == 0:
-        return (pos_t[0], pos_t[1] - step_y)
-    if diff[1] == 0:
-        return (pos_t[0] - step_x, pos_t[1])
     return (pos_t[0] - step_x, pos_t[1] - step_y)
 
 
