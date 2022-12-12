@@ -11,70 +11,70 @@ def get_input(filename):
     return lines.splitlines()
 
 
-class Op:
+class Operation:
     """Monkey operation"""
 
-    def __init__(self, descr):
-        self.lhs, self.operation, self.rhs = descr.split(" = ")[1].split()
+    def __init__(self, operation):
+        self.left_op, self.operation, self.right_op = operation.split(" = ")[1].split()
 
-    def eval(self, old):
-        if self.lhs == "old":
-            lhs = old
-        elif self.lhs.isdecimal():
-            lhs = int(self.lhs)
+    def new_worry_level(self, old):
+        if self.left_op == "old":
+            left_op = old
+        elif self.left_op.isdecimal():
+            left_op = int(self.left_op)
         else:
-            raise ValueError(f"Invalid lhs {self.lhs}")
+            raise ValueError(f"Invalid left operand {self.left_op}")
 
-        if self.rhs == "old":
-            rhs = old
-        elif self.rhs.isdecimal():
-            rhs = int(self.rhs)
+        if self.right_op == "old":
+            right_op = old
+        elif self.right_op.isdecimal():
+            right_op = int(self.right_op)
         else:
-            raise ValueError(f"Invalid rhs {self.rhs}")
+            raise ValueError(f"Invalid right operand {self.right_op}")
 
         if self.operation == "+":
-            return lhs + rhs
+            return left_op + right_op
         if self.operation == "*":
-            return lhs * rhs
+            return left_op * right_op
         raise ValueError(f"Invalid operation {self.operation}")
 
     def get_magic(self):
         if self.operation != "*":
             return 0
         magic = 1
-        if self.lhs != "old":
-            magic *= int(self.lhs)
-        if self.rhs != "old":
-            magic *= int(self.rhs)
+        if self.left_op != "old":
+            magic *= int(self.left_op)
+        if self.right_op != "old":
+            magic *= int(self.right_op)
         return magic
 
     def __str__(self):
-        return f"new = {self.lhs} {self.operation} {self.rhs}"
+        return f"new = {self.left_op} {self.operation} {self.right_op}"
 
 
 class Monkey:
-    """Monkey class"""
+    """A Monkey in the game"""
 
     def __init__(self, game):
         self.name = None
+        self.game = game
         self.items = []
         self.operation = None
         self.test = None
         self.test_target = [None, None]
         self.business = 0
-        self.game = game
 
-    def parse(self, line):
+    def note(self, line):
         if line.startswith("Monkey"):
             self.name = int(line.split()[1].rstrip(":"))
         elif line.startswith("  Starting items: "):
             self.items = [int(item) for item in line.split(": ")[1].split(", ")]
         elif line.startswith("  Operation: "):
-            self.operation = Op(line.split(": ")[1])
-            self.game.magic.add(self.operation.get_magic())
+            self.operation = Operation(line.split(": ")[1])
+            self.game.magic.build(self.operation.get_magic())
         elif line.startswith("  Test: divisible by "):
             self.test = int(line.split()[-1])
-            self.game.magic.add(self.test)
+            self.game.magic.build(self.test)
         elif line.startswith("    If true: throw to monkey "):
             self.test_target[0] = int(line.split()[-1])
         elif line.startswith("    If false: throw to monkey "):
@@ -82,22 +82,24 @@ class Monkey:
         else:
             raise ValueError(f"Unknow monkey description: {line}")
 
-    def receive(self, item):
+    def catch(self, item):
         self.items.append(item)
 
     def play_turn(self):
         for item in self.items:
-            new_item, to_monkey = self.inspect(item)
-            self.game.throw_item(new_item, to_monkey)
+            worry_level, target = self.inspect(item)
+            self.game.throw_item(worry_level, target)
         self.items = []
 
     def inspect(self, item):
         self.business += 1
-        worry_level = self.operation.eval(item)
+
+        worry_level = self.operation.new_worry_level(item)
         if self.game.panic:
             worry_level = self.game.magic.manage_panic(worry_level)
         else:
             worry_level //= 3
+
         if worry_level % self.test == 0:
             return worry_level, self.test_target[0]
         return worry_level, self.test_target[1]
@@ -121,10 +123,10 @@ class Magic:
         self._numbers = set()
         self._magic_number = 1
 
-    def manage_panic(self, item):
-        return item % self._magic_number
+    def manage_panic(self, worry_level):
+        return worry_level % self._magic_number
 
-    def add(self, number):
+    def build(self, number):
         if number > 1 and number not in self._numbers:
             self._numbers.add(number)
             self._magic_number *= number
@@ -144,7 +146,7 @@ class KeepAway:
             if line == "":
                 monkeys.append(Monkey(self))
             else:
-                monkeys[-1].parse(line)
+                monkeys[-1].note(line)
         return monkeys
 
     def play_round(self):
@@ -152,15 +154,15 @@ class KeepAway:
             monkey.play_turn()
 
     def throw_item(self, item, to_monkey):
-        self.monkeys[to_monkey].receive(item)
+        self.monkeys[to_monkey].catch(item)
 
     def monkey_business(self):
-        max_business = [0, 0]
+        most_active = [0, 0]
         for monkey in self.monkeys:
-            min_ = min(max_business)
+            min_ = min(most_active)
             if monkey.business > min_:
-                max_business[max_business.index(min_)] = monkey.business
-        return max_business[0] * max_business[1]
+                most_active[most_active.index(min_)] = monkey.business
+        return most_active[0] * most_active[1]
 
 
 def part1(notes):
