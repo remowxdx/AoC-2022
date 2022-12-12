@@ -2,6 +2,8 @@
 
 from aoc import check_solution, save_solution, test_eq
 
+from letters import Letters
+
 DAY = 10
 
 
@@ -91,7 +93,11 @@ def part2(data):
     for _ in range(240):
         display.scan(cpu)
         cpu.tick()
-    return str(display)
+    ocr = Letters()
+    try:
+        return ocr.ocr(str(display))
+    except ValueError:
+        return str(display)
 
 
 def run_tests():
