@@ -68,3 +68,18 @@ Otherwise very fun to implement!
 
 Took much time to set everything up...
 And a crysis for the second part...
+
+# Day 12
+
+Classic breadth-first-something. I should build a library
+and not start implementing every time anew.
+
+# Day 13
+
+I was sick at home.
+Took me ages to dicover that there were numbers
+made of *two* digits in the input...
+
+Message `[1,2,34]` was translated in `[1,2,3,4]`.
+
+I'm sure that was due to the sickness ;(

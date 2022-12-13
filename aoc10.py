@@ -43,7 +43,7 @@ class CPU:
 
 
 class Display:
-    """The disaplay"""
+    """The display 40px x 6px"""
 
     def __init__(self):
         self.display = [["." for _ in range(40)] for _ in range(6)]
