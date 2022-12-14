@@ -15,21 +15,21 @@ class Cave:
     """The scan of the cave."""
 
     def __init__(self, data):
-        self.bounding = None
-        self.cave = {}
         self.source = (500, 0)
+        self.bounding = [self.source[0], self.source[0], self.source[1], self.source[1]]
+        self.cave = {}
         self.steps = 0
         for line in data:
             prev = None
             for coords in line.split(" -> "):
+
                 x, y = [int(num) for num in coords.split(",")]
-                if self.bounding is None:
-                    self.bounding = [x, x, 0, y]
-                else:
-                    self.bounding[0] = min(x, self.bounding[0])
-                    self.bounding[1] = max(x, self.bounding[1])
-                    self.bounding[2] = min(y, self.bounding[2])
-                    self.bounding[3] = max(y, self.bounding[3])
+
+                self.bounding[0] = min(x, self.bounding[0])
+                self.bounding[1] = max(x, self.bounding[1])
+                self.bounding[2] = min(y, self.bounding[2])
+                self.bounding[3] = max(y, self.bounding[3])
+
                 if prev is None:
                     prev = (x, y)
                     continue
@@ -68,18 +68,15 @@ class Cave:
                 return False
 
     def next2(self):
-        sand = self.source
-        if sand in self.cave:
+        if self.source in self.cave:
             return False
+
+        sand = self.source
         self.steps += 1
         while True:
             blocked, sand = self.step(sand)
 
-            if blocked:
-                self.cave[sand] = "o"
-                return True
-
-            if sand[1] == self.bounding[3] + 1:
+            if blocked or sand[1] == self.bounding[3] + 1:
                 self.cave[sand] = "o"
                 return True
 
