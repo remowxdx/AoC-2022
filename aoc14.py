@@ -43,60 +43,45 @@ class Cave:
                     raise ValueError("Rock not horizontal nor vertical.")
                 prev = (x, y)
 
-    def step(self):
-        self.steps += 1
+    def step(self, sand):
+        for next_sand in [
+            (sand[0], sand[1] + 1),
+            (sand[0] - 1, sand[1] + 1),
+            (sand[0] + 1, sand[1] + 1),
+        ]:
+            if next_sand not in self.cave:
+                sand = next_sand
+                return False, sand
+        return True, sand
+
+    def next(self):
         sand = self.source
         while True:
-            if sand[1] > self.bounding[3]:
-                self.steps -= 1
-                return False
-            next_sand = (sand[0], sand[1] + 1)
-            if next_sand not in self.cave:
-                # print("|")
-                sand = next_sand
-                continue
-            next_sand = (sand[0] - 1, sand[1] + 1)
-            if next_sand not in self.cave:
-                # print("/")
-                sand = next_sand
-                continue
-            next_sand = (sand[0] + 1, sand[1] + 1)
-            if next_sand not in self.cave:
-                # print("\")
-                sand = next_sand
-                continue
-            # print("_")
-            self.cave[sand] = "o"
-            return True
+            blocked, sand = self.step(sand)
 
-    def step2(self):
+            if blocked:
+                self.cave[sand] = "o"
+                self.steps += 1
+                return True
+
+            if sand[1] > self.bounding[3]:
+                return False
+
+    def next2(self):
         sand = self.source
         if sand in self.cave:
             return False
         self.steps += 1
         while True:
-            if sand[1] == self.bounding[3] + 1:
-                # print("-")
+            blocked, sand = self.step(sand)
+
+            if blocked:
                 self.cave[sand] = "o"
                 return True
-            next_sand = (sand[0], sand[1] + 1)
-            if next_sand not in self.cave:
-                # print("|")
-                sand = next_sand
-                continue
-            next_sand = (sand[0] - 1, sand[1] + 1)
-            if next_sand not in self.cave:
-                # print("/")
-                sand = next_sand
-                continue
-            next_sand = (sand[0] + 1, sand[1] + 1)
-            if next_sand not in self.cave:
-                # print("\")
-                sand = next_sand
-                continue
-            # print("_")
-            self.cave[sand] = "o"
-            return True
+
+            if sand[1] == self.bounding[3] + 1:
+                self.cave[sand] = "o"
+                return True
 
     def __str__(self):
         cave = ""
@@ -112,7 +97,7 @@ class Cave:
 
 def part1(data):
     cave = Cave(data)
-    while cave.step():
+    while cave.next():
         pass
     # print(cave)
     return cave.steps
@@ -120,7 +105,7 @@ def part1(data):
 
 def part2(data):
     cave = Cave(data)
-    while cave.step2():
+    while cave.next2():
         pass
     # print(cave)
     return cave.steps
@@ -161,8 +146,8 @@ def run_part2(solved):
 
 def main():
     run_tests()
-    run_part1(False)
-    run_part2(False)
+    run_part1(True)
+    run_part2(True)
 
 
 if __name__ == "__main__":
