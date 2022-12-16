@@ -87,3 +87,9 @@ I'm sure that was due to the sickness ;(
 # Day 14
 
 I like this "Minecraft-y-like" type of problems!
+
+# Day 15
+
+I was stuck on part 2... Coming home the day after I was struck
+by enlightenment and solve right away...
+
