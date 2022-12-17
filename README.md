@@ -93,3 +93,11 @@ I like this "Minecraft-y-like" type of problems!
 I was stuck on part 2... Coming home the day after I was struck
 by enlightenment and solve right away...
 
+# Day 16
+
+Solved part 1, part 2 takes too much time/memory. Should find another way.
+
+# Day 17
+
+Solved part 1, and much later part 2. Ha(r)d to understand the difference between
+step for falling rock and step for pushing rock...
