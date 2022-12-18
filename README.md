@@ -101,3 +101,9 @@ Solved part 1, part 2 takes too much time/memory. Should find another way.
 
 Solved part 1, and much later part 2. Ha(r)d to understand the difference between
 step for falling rock and step for pushing rock...
+
+# Day 18
+
+Easily solved part 1. Took hours ot solve part 2 with many errors and rewrites...
+at the end it was a mistake in finding the bounding of the lava block
+(I took the max of the smaller bounding instead of the bigger).
