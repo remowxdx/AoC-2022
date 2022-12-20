@@ -90,119 +90,116 @@ def explore(maze, step, open_valves, position, pressure_released):
     return pressure_released + cache[key]
 
 
-def explore_2(maze, step, open_valves, me, elephant, pressure_released, prev):
+def explore_2(maze, step, open_valves, positions, prev):
     global cache
 
-    # print(step, open_valves, position, pressure_released)
-
     if step == 26:
-        return pressure_released
+        return 0
 
-    key = (
-        f"{step}_{'-'.join(sorted(open_valves))}_{min(me,elephant)}_{max(me,elephant)}"
-    )
+    key = f"{step}_{'-'.join(sorted(open_valves))}_{min(positions)}_{max(positions)}"
     if key in cache:
+        # if step < 19:
+        # print(key)
         # print(".", end="")
-        return pressure_released + cache[key]
+        return cache[key]
+
+    pressure_released = pressure_release(maze, open_valves)
 
     # print()
-    print(key)
+    # print(key)
     if len(open_valves) == len(maze):
-        return pressure_released + (26 - step) * pressure_release(maze, open_valves)
+        # print("All valves open", step, open_valves, positions)
+        return (26 - step) * pressure_released
 
     pressures = []
-    if me not in open_valves:
-        # print(f"open {position}")
-        open_valves_new = open_valves.copy()
-        open_valves_new.add(me)
-        for tunnel in maze[elephant][1]:
-            if (
-                maze[elephant][0] == 0
-                and len(maze[elephant][1]) == 2
-                and tunnel == prev[1]
-            ):
-                continue
-            pressures.append(
-                explore_2(
-                    maze,
-                    step + 1,
-                    open_valves_new,
-                    me,
-                    tunnel,
-                    pressure_release(maze, open_valves),
-                    (me, elephant),
-                )
-            )
+    # actions = []
 
-    if elephant not in open_valves:
-        # print(f"open {position}")
-        open_valves_new = open_valves.copy()
-        open_valves_new.add(elephant)
-        for tunnel in maze[me][1]:
-            if maze[me][0] == 0 and len(maze[me][1]) == 2 and tunnel == prev[0]:
-                continue
-            pressures.append(
-                explore_2(
-                    maze,
-                    step + 1,
-                    open_valves_new,
-                    tunnel,
-                    elephant,
-                    pressure_release(maze, open_valves),
-                    (me, elephant),
-                )
-            )
+    p1, p2 = positions
 
-    if me != elephant and me not in open_valves and elephant not in open_valves:
-        open_valves_new = open_valves.copy()
-        open_valves_new.add(elephant)
-        open_valves_new.add(me)
+    if p1 != p2 and p1 not in open_valves and p2 not in open_valves:
+        open_valves.add(p1)
+        open_valves.add(p2)
         pressures.append(
             explore_2(
                 maze,
                 step + 1,
-                open_valves_new,
-                me,
-                elephant,
-                pressure_release(maze, open_valves),
-                (me, elephant),
+                open_valves,
+                positions,
+                (None, None),
             )
         )
+        # actions.append(f"open {p1}, open {p2}")
+        open_valves.remove(p2)
+        open_valves.remove(p1)
 
-    for tunnel_elephant in maze[elephant][1]:
-        if (
-            maze[elephant][0] == 0
-            and len(maze[elephant][1]) == 2
-            and tunnel_elephant == prev[1]
-        ):
-            continue
-        for tunnel_me in maze[me][1]:
-            if maze[me][0] == 0 and len(maze[me][1]) == 2 and tunnel_me == prev[0]:
+    if p1 not in open_valves:
+        # print(f"open {position}")
+        open_valves.add(p1)
+        for tunnel in maze[p2][1]:
+            if tunnel == prev[1]:
                 continue
             pressures.append(
                 explore_2(
                     maze,
                     step + 1,
                     open_valves,
-                    tunnel_me,
-                    tunnel_elephant,
-                    pressure_release(maze, open_valves),
-                    (me, elephant),
+                    (p1, tunnel),
+                    (None, p2),
                 )
             )
+            # actions.append(f"open {p1}, move {p2} -> {tunnel}")
+        open_valves.remove(p1)
+
+    if p2 not in open_valves:
+        # print(f"open {position}")
+        open_valves.add(p2)
+        for tunnel in maze[p1][1]:
+            if tunnel == prev[0]:
+                continue
+            pressures.append(
+                explore_2(
+                    maze,
+                    step + 1,
+                    open_valves,
+                    (tunnel, p2),
+                    (p1, None),
+                )
+            )
+            # actions.append(f"move {p1} -> {tunnel}, open {p2}")
+        open_valves.remove(p2)
+
+    for tunnel_2 in maze[p2][1]:
+        if len(maze[p2][1]) == 2 and tunnel_2 == prev[1]:
+            continue
+        for tunnel_1 in maze[p1][1]:
+            if len(maze[p1][1]) == 2 and tunnel_1 == prev[0]:
+                continue
+            pressures.append(
+                explore_2(
+                    maze,
+                    step + 1,
+                    open_valves,
+                    (tunnel_1, tunnel_2),
+                    positions,
+                )
+            )
+            # actions.append(f"move {p1} -> {tunnel_1}, move {p2} -> {tunnel_2}")
 
     if len(pressures) == 0:
-        return 0
-    cache[key] = max(pressures)
+        raise ValueError("No move possible.")
+    result = max(pressures) + pressure_released
+    # print(step, actions[pressures.index(max(pressures))])
     # print(key, cache[key])
-    return pressure_released + cache[key]
+    if step < 23:
+        cache[key] = result
+    return result
 
 
 def part1(data):
     global cache
 
     maze = parse_maze(data)
-    open_valves = [name for name in maze if maze[name][0] == 0]
+    open_valves = [name for name, props in maze.items() if props[0] == 0]
 
     res = explore(maze, 0, open_valves, "AA", 0)
     cache = {}
@@ -212,11 +209,11 @@ def part1(data):
 def part2(data):
     global cache
 
-    maze = parse_maze(data)
-    open_valves = set([name for name in maze if maze[name][0] == 0])
-
-    res = explore_2(maze, 0, open_valves, "AA", "AA", 0, (None, None))
     cache = {}
+    maze = parse_maze(data)
+    open_valves = {name for name, props in maze.items() if props[0] == 0}
+
+    res = explore_2(maze, 0, open_valves, ("AA", "AA"), (None, None))
     return res
 
 

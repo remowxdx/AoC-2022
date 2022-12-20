@@ -97,6 +97,13 @@ by enlightenment and solve right away...
 
 Solved part 1, part 2 takes too much time/memory. Should find another way.
 
+I tried to cheat by downloading two solutions from the 'net... But neither
+worked! One gave me the wrong result, the other consumed all my memory
+and was killed by the OS.
+
+At the end of the story, I tuned the cache of my solution and waited
+about one hour for the result.
+
 # Day 17
 
 Solved part 1, and much later part 2. Ha(r)d to understand the difference between
@@ -107,3 +114,14 @@ step for falling rock and step for pushing rock...
 Easily solved part 1. Took hours ot solve part 2 with many errors and rewrites...
 at the end it was a mistake in finding the bounding of the lava block
 (I took the max of the smaller bounding instead of the bigger).
+
+# Day 19
+
+I can't find a quick way to solve this.
+
+# Day 20
+
+At first I thought that I programmed the index operations wrong.
+But what was wrong was the display of the decrypted message...
+
+
