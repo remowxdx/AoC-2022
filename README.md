@@ -124,4 +124,8 @@ I can't find a quick way to solve this.
 At first I thought that I programmed the index operations wrong.
 But what was wrong was the display of the decrypted message...
 
+# Day 21
+
+This went almost without problems. First part easy, second part took a little bit
+of thinking.
 
