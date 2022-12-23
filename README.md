@@ -118,6 +118,7 @@ at the end it was a mistake in finding the bounding of the lava block
 # Day 19
 
 I can't find a quick way to solve this.
+So just add a little cache and let it run...
 
 # Day 20
 
@@ -129,3 +130,11 @@ But what was wrong was the display of the decrypted message...
 This went almost without problems. First part easy, second part took a little bit
 of thinking.
 
+# Day 22
+
+Started solving but was too tired...
+
+# Day 23
+
+Not difficult but took long time to code... and to compute the second part.
+May be missing some optimisations.

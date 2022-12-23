@@ -48,11 +48,12 @@ class MostGeodes:
         self.max_steps = max_steps
         self.best = 0
         self.count = 0
+        self.cache = {}
 
     def factory_wait(self, factory):
         wait_times = [
             [
-                -(-self.blueprint[robot_type][mat] // factory[2][mat])
+                -(-self.blueprint[robot_type][mat] // factory[2][mat]) - factory[1][mat]
                 if factory[2][mat] > 0
                 else 0
                 for mat in range(4)
@@ -63,14 +64,17 @@ class MostGeodes:
         return max_wait
 
     def step(self, factory, factory_wait, wait):
-        self.count += 1
-        if factory[0] == 24:
-            print(self.count, factory)
+        if factory in self.cache:
+            return self.cache[factory]
+
+        # self.count += 1
+        # if factory[0] == 24:
+        #     print(self.count, factory)
 
         geodes = factory[1][3]
 
         if geodes > self.best:
-            print("M", factory)
+            # print("M", factory)
             self.best = geodes
 
         if factory[0] == self.max_steps:
@@ -95,6 +99,7 @@ class MostGeodes:
         if len(geodes) == 0 or wait < factory_wait:
             geodes.append(self.step(self.work(factory), factory_wait, wait + 1))
 
+        self.cache[factory] = max(geodes)
         return max(geodes)
 
     def can_build(self, factory, robot_nr):
@@ -159,7 +164,29 @@ def part1(data):
 
 
 def part2(data):
-    return None
+
+    blueprints = []
+    for line in data[0:3]:
+        blueprints.append(parse_blueprint(line))
+
+    # print("\n".join([str(bp) for bp in blueprints]))
+
+    most_geodes = []
+    for i, blueprint in enumerate(blueprints):
+        print(blueprint)
+        factory = (0, (0, 0, 0, 0), (1, 0, 0, 0))
+        finder = MostGeodes(blueprint, 32)
+        geodes = finder.step(factory, finder.factory_wait(factory), 0)
+        print(geodes)
+        most_geodes.append(geodes)
+        print()
+
+    print(most_geodes)
+    # return most_geodes[0] * most_geodes[1] * most_geodes[2]
+    result = 1
+    for geodes in most_geodes:
+        result *= geodes
+    return result
 
 
 def run_tests():
@@ -169,7 +196,7 @@ def run_tests():
     print()
 
     print("Test Part 2:")
-    test_eq("Test 2.1", part2, 42, test_input_1)
+    test_eq("Test 2.1", part2, 62 * 56, test_input_1)
     print()
 
 
@@ -196,9 +223,9 @@ def run_part2(solved):
 
 
 def main():
-    run_tests()
-    run_part1(False)
-    # run_part2(False)
+    # run_tests()
+    run_part1(True)
+    run_part2(True)
 
 
 if __name__ == "__main__":
