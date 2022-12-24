@@ -133,6 +133,15 @@ of thinking.
 # Day 22
 
 Started solving but was too tired...
+Solved, but took me a long long time to wrap my head around the cube...
+It help building the cube with the paper.
+The solution works only if the unwrapped cube has the shape like mine.
+<pre>
+    [][]
+    []
+  [][]
+  []
+</pre>
 
 # Day 23
 
