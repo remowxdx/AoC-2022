@@ -138,3 +138,8 @@ Started solving but was too tired...
 
 Not difficult but took long time to code... and to compute the second part.
 May be missing some optimisations.
+
+# Day 24
+
+Forgot to not visit the same place at the same time twice (and more), and
+wondering why does it take so much time...
