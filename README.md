@@ -152,3 +152,9 @@ May be missing some optimisations.
 
 Forgot to not visit the same place at the same time twice (and more), and
 wondering why does it take so much time...
+
+# Day 25
+
+Got to the end of the voyage, with 50 stars!
+
+Be sure to convert back to SNAFU notation.
